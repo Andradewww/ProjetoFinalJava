@@ -67,12 +67,12 @@ public class CarroDAO {
         }
     }
     
-    public Carro procurarPorPlaca(Carro carro) {
+    public Carro procurarPorPlaca(String placa) {
         try {
             Connection conn = ConexaoBD.conectar();
             String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE placa = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, carro.getPlaca());
+            ps.setString(1, placa);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 Carro obj = new Carro(
@@ -140,9 +140,9 @@ public class CarroDAO {
         try {
             while (rs.next()) {
                 Carro obj = new Carro(
-                		rs.getInt("id"),      // Ajuste para o nome correto da coluna 'id'
-                        rs.getString("marca"), // Ajuste para o nome correto da coluna 'marca'
-                        rs.getString("modelo"), // Ajuste para o nome correto da coluna 'modelo'
+                		rs.getInt("id"),
+                        rs.getString("marca"),
+                        rs.getString("modelo"),
                         rs.getString("placa")
                 );
                 obj.setId(rs.getInt(1));

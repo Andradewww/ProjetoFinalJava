@@ -3,11 +3,15 @@ package DTO;
 public class Agente {
 	
 	private int id;
+	private int codigo;
 	private String nome;
 	private int idade;
 	
-	public Agente() {
-
+	public Agente(int id, int codigo, String nome, int idade) {
+		this.id = id;
+        this.codigo = codigo;
+        this.nome = nome;
+        this.idade = idade;
 	}
 
 	public int getId() {
@@ -16,9 +20,16 @@ public class Agente {
 	public void setId(int id) {
 		this.id = id;
 	}
+	public int getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(int codigo) {
+		this.codigo = codigo;
+	}
 	public String getNome() {
 		return nome;
 	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
@@ -34,6 +45,8 @@ public class Agente {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Agente [id=");
 		builder.append(id);
+		builder.append(", codigo=");
+		builder.append(codigo);
 		builder.append(", nome=");
 		builder.append(nome);
 		builder.append(", idade=");
@@ -41,5 +54,7 @@ public class Agente {
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
 
 }

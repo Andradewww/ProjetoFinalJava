@@ -1,9 +1,9 @@
 package Main;
-import BO.CarroBO;
-import DTO.Carro;
+//import BO.CarroBO;
+//import DTO.Carro;
 
 public class MainInsercao {
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		// Teste Inserir
 		CarroBO marcaBO = new CarroBO();
 		Carro marca = new Carro("teste");
@@ -21,5 +21,5 @@ public class MainInsercao {
 			System.out.println("Inserido com Sucesso");
 		else
 			System.out.println("Erro ao Inserir");
-	}
+	}*/
 }

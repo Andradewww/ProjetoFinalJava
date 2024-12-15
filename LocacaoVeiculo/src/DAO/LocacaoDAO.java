@@ -1,24 +1,28 @@
 package DAO;
+
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import DTO.Agente;
 import Conexao.ConexaoBD;
+import DTO.Locacao;
 
-public class AgenteDAO {
+public class LocacaoDAO {
 	
-	final String NOMEDATABELA = "agente";
+final String NOMEDATABELA = "locacao";
     
-    public boolean inserir(Agente agente) {
+    public boolean inserir(Locacao locacao) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "INSERT INTO " + NOMEDATABELA + " (codigo, nome, idade) VALUES (?, ?, ?);";
+            String sql = "INSERT INTO " + NOMEDATABELA + " (placaVeiculo, agenteLocacao, cliente, dataInicio, dataFim) VALUES (?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, agente.getCodigo());
-            ps.setString(2, agente.getNome());
-            ps.setInt(3, agente.getIdade());
+            ps.setString(1, locacao.getPlacaVeiculo().substring(0, 7));
+            ps.setString(2, locacao.getAgenteLocacao());
+            ps.setString(2, locacao.getCliente());
+            ps.setDate(3, (Date) locacao.getDataInicio());
+            ps.setDate(4, (Date) locacao.getDataFim());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -29,15 +33,16 @@ public class AgenteDAO {
         }
     }
 
-    public boolean alterar(Agente agente) {
+    public boolean alterar(Locacao locacao) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "UPDATE " + NOMEDATABELA + " SET codigo = ?, nome = ?, idade = ? WHERE id = ?;";
+            String sql = "UPDATE " + NOMEDATABELA + " SET placaVeiculo = ?, agenteLocacao = ?, cliente = ?, dataInicio = ?, dataFim = ? WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, agente.getCodigo());
-            ps.setString(2, agente.getNome());
-            ps.setInt(3, agente.getIdade());
-            ps.setInt(4, agente.getId());
+            ps.setString(1, locacao.getPlacaVeiculo().substring(0, 7));
+            ps.setString(2, locacao.getAgenteLocacao());
+            ps.setString(2, locacao.getCliente());
+            ps.setDate(3, (Date) locacao.getDataInicio());
+            ps.setDate(4, (Date) locacao.getDataFim());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -48,12 +53,17 @@ public class AgenteDAO {
         }
     }
     
-    public boolean excluir(Agente agente) {
+    public boolean excluir(Locacao locacao) {
         try {
             Connection conn = ConexaoBD.conectar();
             String sql = "DELETE FROM " + NOMEDATABELA + " WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, agente.getId());
+            ps.setInt(1, locacao.getId());
+            //ps.setString(1, locacao.getPlacaVeiculo().substring(0, 7));
+            //ps.setString(2, locacao.getAgenteLocacao());
+            //ps.setString(2, locacao.getAgenteCliente());
+            //ps.setDate(3, (Date) locacao.getDataInicio());
+            //ps.setDate(4, (Date) locacao.getDataFim());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -64,24 +74,28 @@ public class AgenteDAO {
         }
     }
     
-    public Agente procurarPorCodigo(int codigo) {
+    public Locacao procurarPorCliente(String cliente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE codigo = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE cliente = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, codigo);
+            ps.setString(1, cliente);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Agente obj = new Agente(
+                Locacao obj = new Locacao(
                 		rs.getInt(1),
-                        rs.getInt(2),
+                        rs.getString(2),
                         rs.getString(3),
-                        rs.getInt(4)
+                        rs.getString(4),
+                        rs.getDate(5),
+                        rs.getDate(6)
                 );
                 obj.setId(rs.getInt(1));
-                obj.setCodigo(rs.getInt(2));
-                obj.setNome(rs.getString(3));
-                obj.setIdade(rs.getInt(4));
+                obj.setPlacaVeiculo(rs.getString(2));
+                obj.setAgenteLocacao(rs.getString(3));
+                obj.setCliente(rs.getString(4));
+                obj.setDataInicio(rs.getDate(5));
+                obj.setDataFim(rs.getDate(6));
                 ps.close();
                 rs.close();
                 conn.close();
@@ -98,12 +112,12 @@ public class AgenteDAO {
         }
     }
     
-    public boolean existe(Agente agente) {
+    public boolean existe(Locacao locacao) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE placaVeiculo = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, agente.getNome());
+            ps.setString(1, locacao.getPlacaVeiculo());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 ps.close();
@@ -118,13 +132,13 @@ public class AgenteDAO {
         return false;
     }
     
-    public List<Agente> pesquisarTodos() {
+    public List<Locacao> pesquisarTodos() {
         try {
             Connection conn = ConexaoBD.conectar();
             String sql = "SELECT * FROM " + NOMEDATABELA + ";";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            List<Agente> listObj = montarLista(rs);
+            List<Locacao> listObj = montarLista(rs);
             return listObj;
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,20 +146,24 @@ public class AgenteDAO {
         }
     }
     
-    public List<Agente> montarLista(ResultSet rs) {
-        List<Agente> listObj = new ArrayList<Agente>();
+    public List<Locacao> montarLista(ResultSet rs) {
+        List<Locacao> listObj = new ArrayList<Locacao>();
         try {
             while (rs.next()) {
-            	Agente obj = new Agente(
+            	Locacao obj = new Locacao(
             			rs.getInt(1),
-                        rs.getInt(2),
+                        rs.getString(2),
                         rs.getString(3),
-                        rs.getInt(4)
-            	);
+                        rs.getString(4),
+                        rs.getDate(5),
+                        rs.getDate(6)
+                );
                 obj.setId(rs.getInt(1));
-                obj.setCodigo(rs.getInt(2));
-                obj.setNome(rs.getString(3));
-                obj.setIdade(rs.getInt(4));
+                obj.setPlacaVeiculo(rs.getString(2));
+                obj.setAgenteLocacao(rs.getString(3));
+                obj.setCliente(rs.getString(4));
+                obj.setDataInicio(rs.getDate(5));
+                obj.setDataInicio(rs.getDate(6));
                 listObj.add(obj);
             }
             return listObj;
@@ -154,4 +172,5 @@ public class AgenteDAO {
             return null;
         }
     }
+
 }

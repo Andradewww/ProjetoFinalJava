@@ -25,8 +25,9 @@ public class CarroBO {
         return carroDAO.excluir(carro);
     }
 
-    public Carro procurarPorId(Carro carro){
-        return carroDAO.procurarPorPlaca(carro); // Este método deve ser procurarPorId se ele busca por ID
+    public Carro procurarPorPlaca(String placa) {
+        CarroDAO carroDAO = new CarroDAO();
+        return carroDAO.procurarPorPlaca(placa);
     }
 
     public boolean existe(Carro carro){
