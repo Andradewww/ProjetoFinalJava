@@ -14,11 +14,13 @@ public class AgenteDAO {
     public boolean inserir(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "INSERT INTO " + NOMEDATABELA + " (codigo, nome, idade) VALUES (?, ?, ?);";
+            String sql = "INSERT INTO " + NOMEDATABELA + " (codigo, nome, idade, email, senha) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, agente.getCodigo());
             ps.setString(2, agente.getNome());
             ps.setInt(3, agente.getIdade());
+            ps.setString(4, agente.getEmail());
+            ps.setString(5, agente.getSenha());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -32,12 +34,14 @@ public class AgenteDAO {
     public boolean alterar(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "UPDATE " + NOMEDATABELA + " SET codigo = ?, nome = ?, idade = ? WHERE id = ?;";
+            String sql = "UPDATE " + NOMEDATABELA + " SET codigo = ?, nome = ?, idade = ?, email = ?, senha = ? WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, agente.getCodigo());
             ps.setString(2, agente.getNome());
             ps.setInt(3, agente.getIdade());
-            ps.setInt(4, agente.getId());
+            ps.setString(4, agente.getEmail());
+            ps.setString(5, agente.getSenha());
+            ps.setInt(6, agente.getId());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -76,12 +80,16 @@ public class AgenteDAO {
                 		rs.getInt(1),
                         rs.getInt(2),
                         rs.getString(3),
-                        rs.getInt(4)
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getString(6)
                 );
                 obj.setId(rs.getInt(1));
                 obj.setCodigo(rs.getInt(2));
                 obj.setNome(rs.getString(3));
                 obj.setIdade(rs.getInt(4));
+                obj.setEmail(rs.getString(5));
+                obj.setSenha(rs.getString(6));
                 ps.close();
                 rs.close();
                 conn.close();
@@ -101,9 +109,10 @@ public class AgenteDAO {
     public boolean existe(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ? OR email = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, agente.getNome());
+            ps.setString(2, agente.getEmail());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 ps.close();
@@ -140,12 +149,16 @@ public class AgenteDAO {
             			rs.getInt(1),
                         rs.getInt(2),
                         rs.getString(3),
-                        rs.getInt(4)
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getString(6)
             	);
                 obj.setId(rs.getInt(1));
                 obj.setCodigo(rs.getInt(2));
                 obj.setNome(rs.getString(3));
                 obj.setIdade(rs.getInt(4));
+                obj.setEmail(rs.getString(5));
+                obj.setSenha(rs.getString(6));
                 listObj.add(obj);
             }
             return listObj;
