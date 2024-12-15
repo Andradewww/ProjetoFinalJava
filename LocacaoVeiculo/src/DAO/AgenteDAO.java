@@ -4,21 +4,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import DTO.Carro;
+import DTO.Agente;
 import Conexao.ConexaoBD;
 
-public class CarroDAO {
-
-    final String NOMEDATABELA = "carro";
+public class AgenteDAO {
+	
+	final String NOMEDATABELA = "agente";
     
-    public boolean inserir(Carro carro) {
+    public boolean inserir(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "INSERT INTO " + NOMEDATABELA + " (placa, marca, modelo) VALUES (?, ?, ?);";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, carro.getPlaca().substring(0, 7));
-            ps.setString(2, carro.getMarca());
-            ps.setString(3, carro.getModelo());
+            String sql = "INSERT INTO " + NOMEDATABELA + " (nome, idade) VALUES (?, ?);";
+            PreparedStatement ps = conn.prepareStatement(sql);            
+            ps.setString(1, agente.getNome());
+            ps.setInt(2, agente.getIdade());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -29,15 +28,14 @@ public class CarroDAO {
         }
     }
 
-    public boolean alterar(Carro carro) {
+    public boolean alterar(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "UPDATE " + NOMEDATABELA + " SET marca = ?, modelo = ?, placa = ? WHERE id = ?;";
+            String sql = "UPDATE " + NOMEDATABELA + " SET nome = ?, idade = ? WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, carro.getMarca());
-            ps.setString(2, carro.getModelo());
-            ps.setString(3, carro.getPlaca());
-            ps.setInt(4, carro.getId()); 
+            ps.setString(1, agente.getNome());
+            ps.setInt(2, agente.getIdade());
+            ps.setInt(3, agente.getId());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -48,15 +46,12 @@ public class CarroDAO {
         }
     }
     
-    public boolean excluir(Carro carro) {
+    public boolean excluir(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
             String sql = "DELETE FROM " + NOMEDATABELA + " WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, carro.getId());
-            //ps.setString(2, carro.getMarca());
-            //ps.setString(3, carro.getModelo());
-            //ps.setString(4, carro.getPlaca());
+            ps.setInt(1, agente.getId());
             ps.executeUpdate();
             ps.close();
             conn.close();
@@ -67,24 +62,18 @@ public class CarroDAO {
         }
     }
     
-    public Carro procurarPorPlaca(Carro carro) {
+    public Agente procurarPorNome(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE placa = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, carro.getPlaca());
+            ps.setString(1, agente.getNome());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Carro obj = new Carro(
-                		rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getString(4)
-                );
+                Agente obj = new Agente();
                 obj.setId(rs.getInt(1));
-                obj.setMarca(rs.getString(2));
-                obj.setModelo(rs.getString(3));
-                obj.setPlaca(rs.getString(4));
+                obj.setNome(rs.getString(2));
+                obj.setIdade(rs.getInt(3));
                 ps.close();
                 rs.close();
                 conn.close();
@@ -101,12 +90,12 @@ public class CarroDAO {
         }
     }
     
-    public boolean existe(Carro carro) {
+    public boolean existe(Agente agente) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE placa = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, carro.getPlaca());
+            ps.setString(1, agente.getNome());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 ps.close();
@@ -121,13 +110,13 @@ public class CarroDAO {
         return false;
     }
     
-    public List<Carro> pesquisarTodos() {
+    public List<Agente> pesquisarTodos() {
         try {
             Connection conn = ConexaoBD.conectar();
             String sql = "SELECT * FROM " + NOMEDATABELA + ";";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            List<Carro> listObj = montarLista(rs);
+            List<Agente> listObj = montarLista(rs);
             return listObj;
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,20 +124,14 @@ public class CarroDAO {
         }
     }
     
-    public List<Carro> montarLista(ResultSet rs) {
-        List<Carro> listObj = new ArrayList<Carro>();
+    public List<Agente> montarLista(ResultSet rs) {
+        List<Agente> listObj = new ArrayList<Agente>();
         try {
             while (rs.next()) {
-                Carro obj = new Carro(
-                		rs.getInt("id"),      // Ajuste para o nome correto da coluna 'id'
-                        rs.getString("marca"), // Ajuste para o nome correto da coluna 'marca'
-                        rs.getString("modelo"), // Ajuste para o nome correto da coluna 'modelo'
-                        rs.getString("placa")
-                );
+            	Agente obj = new Agente();
                 obj.setId(rs.getInt(1));
-                obj.setMarca(rs.getString(2));
-                obj.setModelo(rs.getString(3));
-                obj.setPlaca(rs.getString(4));
+                obj.setNome(rs.getString(2));
+                obj.setIdade(rs.getInt(3));
                 listObj.add(obj);
             }
             return listObj;
