@@ -11,13 +11,10 @@ public class AgenteBO {
     	agenteDAO = new AgenteDAO();
     }
 
-    public boolean inserir(Agente agente){
-        if (!existe(agente)) {
-            return agenteDAO.inserir(agente);
-        }
-        return false;
+    public boolean existe(Agente agente) {
+        return agenteDAO.existe(agente.getEmail(), agente.getSenha());
     }
-
+    
     public boolean alterar(Agente agente){
         return agenteDAO.alterar(agente);
     }
@@ -30,8 +27,8 @@ public class AgenteBO {
         return agenteDAO.procurarPorCodigo(codigo);
     }
 
-    public boolean existe(Agente agente){
-        return agenteDAO.existe(agente);
+    public boolean existe(String email, String senha) {
+        return agenteDAO.existe(email, senha);
     }
 
     public List<Agente> pesquisarTodos(){

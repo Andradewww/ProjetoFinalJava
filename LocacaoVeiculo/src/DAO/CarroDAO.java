@@ -48,22 +48,19 @@ public class CarroDAO {
         }
     }
     
-    public boolean excluir(Carro carro) {
+    public boolean excluir(String placa) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "DELETE FROM " + NOMEDATABELA + " WHERE id = ?;";
+            String sql = "DELETE FROM " + NOMEDATABELA + " WHERE placa = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, carro.getId());
-            //ps.setString(2, carro.getMarca());
-            //ps.setString(3, carro.getModelo());
-            //ps.setString(4, carro.getPlaca());
+            ps.setString(1, placa); // Aqui, passamos a string da placa como parâmetro
             ps.executeUpdate();
             ps.close();
             conn.close();
             return true;
         } catch (Exception e) {
-        	 e.printStackTrace();
-             return false;
+            e.printStackTrace();
+            return false;
         }
     }
     

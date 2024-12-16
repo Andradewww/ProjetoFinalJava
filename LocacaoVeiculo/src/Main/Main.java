@@ -1,56 +1,80 @@
 package Main;
 
+import DAO.AdminDAO;
+import DAO.ClienteDAO;
 import DAO.AgenteDAO;
+import DTO.Admin;
+import DTO.Cliente;
 import DTO.Agente;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    
+public static void main(String[] args) {
+	
+	//view inicial para verificacoes
+    
+    AdminDAO adminDAO = new AdminDAO();
+    ClienteDAO clienteDAO = new ClienteDAO();
+    AgenteDAO agenteDAO = new AgenteDAO();
+
+    //verificar se já existe um administrador cadastrado
+    
+    if (adminDAO.existe()) {
+        System.out.println("Redirecionando para login ...");
+        iniciarLogin(adminDAO, clienteDAO, agenteDAO);
+    } else {
+        System.out.println("Nenhum administrador cadastrado. Vamos criar um administrador.");
+        Scanner leia = new Scanner(System.in);
+        System.out.println("Informe um Email seguro: ");
+        String email = leia.next();
+        System.out.println("Informe a Senha: ");
+        String senha = leia.next();
+        leia.close();
+
+        if (adminDAO.inserir(new Admin(0, email, senha))) {
+            System.out.println("Administrador criado com sucesso! Redirecionando para login ...");
+            iniciarLogin(adminDAO, clienteDAO, agenteDAO);
+        } else {
+            System.out.println("Erro ao criar administrador. Tente novamente.");
+        }
+    }
+}
+
+    //view login
+    public static void iniciarLogin(AdminDAO adminDAO, ClienteDAO clienteDAO, AgenteDAO agenteDAO) {
         Scanner scanner = new Scanner(System.in);
 
-        // Coletar os dados do agente
-        System.out.println("Digite o id do agente:");
-        int id = scanner.nextInt();
+        System.out.print("Digite o email: ");
+        String email = scanner.nextLine();
 
-        System.out.println("Digite o código do agente:");
-        int codigo = scanner.nextInt();
+        System.out.print("Digite a senha: ");
+        String senha = scanner.nextLine();
 
-        System.out.println("Digite o nome do agente:");
-        String nome = scanner.next();
+        if (adminDAO.validaEmailSenha(email, senha)) { //foi necessário implementar mais um método a parte para admin
+            System.out.println("Login como administrador bem-sucedido. Bem-vindo ao sistema!");
 
-        System.out.println("Digite a idade do agente:");
-        int idade = scanner.nextInt();
+            TelaAdmin.TelaAdmin(adminDAO, clienteDAO, agenteDAO);
+            
+        } else if (clienteDAO.existe(email, senha)) {
+            System.out.println("Login como cliente bem-sucedido. Bem-vindo ao sistema!");
 
-        System.out.println("Digite o email do agente:");
-        String email = scanner.next();
+            TelaCliente.TelaCliente(clienteDAO, senha);
+            
+        } else if (agenteDAO.existe(email, senha)) {
+            System.out.println("Login como agente bem-sucedido. Bem-vindo ao sistema!");
 
-        System.out.println("Digite a senha do agente:");
-        String senha = scanner.next();
-
-        // Criar o objeto Agente com os dados coletados
-        Agente agente = new Agente(id, codigo, nome, idade, email, senha);
-
-        // Instanciar o DAO
-        AgenteDAO agenteDAO = new AgenteDAO();
-
-        // Inserir o agente no banco de dados
-        if (agenteDAO.inserir(agente)) {
-            System.out.println("Agente cadastrado com sucesso!");
-
-            // Verificar se o agente foi realmente cadastrado
-            Agente agenteVerificado = agenteDAO.procurarPorCodigo(codigo);
-            if (agenteVerificado != null) {
-                System.out.println("Agente encontrado:");
-                System.out.println("Nome: " + agenteVerificado.getNome());
-                System.out.println("Idade: " + agenteVerificado.getIdade());
-                System.out.println("Email: " + agenteVerificado.getEmail());
-            } else {
-                System.out.println("Erro ao encontrar o agente no banco de dados.");
-            }
+            TelaAgente.TelaAgente(agenteDAO, clienteDAO);
+            
         } else {
-            System.out.println("Erro ao cadastrar o agente.");
+            System.out.println("Credenciais incorretas. Tente novamente.");
+            iniciarLogin(adminDAO, clienteDAO, agenteDAO); //tenta novamente
         }
 
         scanner.close();
     }
+    
+    
+    
+    
 }

@@ -106,25 +106,23 @@ public class AgenteDAO {
         }
     }
     
-    public boolean existe(Agente agente) {
+    public boolean existe(String email, String senha) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE nome = ? OR email = ?;";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE email = ? AND senha = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, agente.getNome());
-            ps.setString(2, agente.getEmail());
+            ps.setString(1, email);
+            ps.setString(2, senha);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                ps.close();
-                rs.close();
-                conn.close();
-                return true;
-            }
+            boolean existe = rs.next();
+            ps.close();
+            rs.close();
+            conn.close();
+            return existe;
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
             return false;
         }
-        return false;
     }
     
     public List<Agente> pesquisarTodos() {

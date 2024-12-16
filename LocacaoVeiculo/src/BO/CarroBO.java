@@ -21,8 +21,8 @@ public class CarroBO {
         return carroDAO.alterar(carro);
     }
 
-    public boolean excluir(Carro carro){
-        return carroDAO.excluir(carro);
+    public boolean excluir(String placa){
+        return carroDAO.excluir(placa);
     }
 
     public Carro procurarPorPlaca(String placa) {

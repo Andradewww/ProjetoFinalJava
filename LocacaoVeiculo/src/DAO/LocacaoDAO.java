@@ -19,7 +19,7 @@ public class LocacaoDAO {
     public boolean inserir(Locacao locacao) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "INSERT INTO " + NOMEDATABELA + " (carro_id, agente_id, cliente_id, dataInicio, dataFim) VALUES (?, ?, ?, ?, ?);";
+            String sql = "INSERT INTO " + NOMEDATABELA + " (carro_id, agenteLocacao_id, cliente_id, dataInicio, dataFim) VALUES (?, ?, ?, ?, ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, locacao.getVeiculo().getId());
             ps.setInt(2, locacao.getAgenteLocacao().getId());
@@ -36,10 +36,10 @@ public class LocacaoDAO {
         }
     }
 
-    public boolean alterar(Locacao locacao) {
+    public boolean alterar(Locacao locacao) { //
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "UPDATE " + NOMEDATABELA + " SET carro_id = ?, agente_id = ?, cliente_id = ?, dataInicio = ?, dataFim = ? WHERE id = ?;";
+            String sql = "UPDATE " + NOMEDATABELA + " SET carro_id = ?, agenteLocacao_id = ?, cliente_id = ?, dataInicio = ?, dataFim = ? WHERE id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, locacao.getVeiculo().getId());
             ps.setInt(2, locacao.getAgenteLocacao().getId());
@@ -76,7 +76,7 @@ public class LocacaoDAO {
     public Locacao procurarPorCliente(String clienteNome) {
         try {
             Connection conn = ConexaoBD.conectar();
-            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE cliente_id = (SELECT id FROM cliente WHERE nome = ?);";
+            String sql = "SELECT * FROM " + NOMEDATABELA + " WHERE cliente_id = (SELECT id FROM cliente_id WHERE nome_id = ?);";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, clienteNome);
             ResultSet rs = ps.executeQuery();
@@ -132,9 +132,9 @@ public class LocacaoDAO {
 
     private Locacao montarObjeto(ResultSet rs) throws Exception {
         int id = rs.getInt("id");
-        Carro carro = new CarroDAO().procurarPorPlaca(rs.getString("placa"));
-        Agente agenteLocacao = new AgenteDAO().procurarPorCodigo(rs.getInt("codigo"));
-        Cliente cliente = new ClienteDAO().procurarPorCodigo(rs.getInt("codigo"));
+        Carro carro = new CarroDAO().procurarPorPlaca(rs.getString("carro_id"));
+        Agente agenteLocacao = new AgenteDAO().procurarPorCodigo(rs.getInt("agenteLocacao_id"));
+        Cliente cliente = new ClienteDAO().procurarPorCodigo(rs.getInt("cliente_id"));
         Date dataInicio = rs.getDate("dataInicio");
         Date dataFim = rs.getDate("dataFim");
         return new Locacao(id, carro, agenteLocacao, cliente, dataInicio, dataFim);
